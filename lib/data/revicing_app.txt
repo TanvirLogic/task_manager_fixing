@@ -1,0 +1,33 @@
+First checked the Splash Screen ->
+
+// SplashScreen -> There I have build the Scaffold and the screen and called method
+_moveToNextScreen, initially. This method checked if the app has previous login info.
+Currently thinking I have no login info. So it will go to LoginScreen .
+
+Step 01 : SplashScreen to LoginScreen [Checked if data is there for without login]
+
+
+AS this is pretty small size app so that is why We need to save the routes with their name
+in app.dart file. Before naming each screen has a constant like this :
+
+ " static const String name = '/login'; "
+
+ used routes like this :
+ "      initialRoute: SplashScreen.name, // First SplashScreen Show
+        routes: {
+          SplashScreen.name: (_) => SplashScreen(),
+          LoginScreen.name: (_) => LoginScreen(),
+          SignUpScreen.name: (_) => SignUpScreen(),
+          MainNavBarHolderScreen.name: (_) => MainNavBarHolderScreen(),
+          UpdateProfileScreen.name: (_) => UpdateProfileScreen(),
+          // Created Some Routes
+        },
+ "
+
+ // LoginScreen -> Basic UI and Contained a button -> After Hitting the button
+
+    _onTapLoginButton() ->  _login(); // Here Api Call done, as this this post request
+
+    *** In api postRequest method , it will return ApiResponse type data
+    For this We have to understand api_caller.dart file
+

@@ -172,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MainNavBarHolderScreen.name,
         (predicate) => false,
-      );
+      ); // Login done and moved to new_task_screen because default the screen on will be at new
     } else {
       _loginInProgress = false;
       setState(() {});

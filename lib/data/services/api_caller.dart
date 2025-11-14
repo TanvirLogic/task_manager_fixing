@@ -69,7 +69,8 @@ class ApiCaller {
   static Future<ApiResponse> postRequest({
     required String url,
     Map<String, dynamic>? body,
-  }) async {
+  })
+  async {
     try {
       Uri uri = Uri.parse(url);
 
@@ -97,7 +98,7 @@ class ApiCaller {
           responseData: decodedData,
         );
       } else if (statusCode == 401) {
-        await _moveToLogin(); // Direct
+        await _moveToLogin(); // Direct Login for 401 or Unauthorized
         return ApiResponse(
           isSuccess: false,
           responseCode: statusCode,

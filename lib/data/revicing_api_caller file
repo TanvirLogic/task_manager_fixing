@@ -1,0 +1,21 @@
+
+ // First understanding the postRequest method.
+
+ for a http.post() -> I need to pass an uri which will be
+come from an URL, then I need to pass the header as well as the body.
+Like this -> body: jsonEncode(body)
+
+For each request I have to mind it that , A response will be given. Then I need to decode the response
+and save to response data , which is a dynamic variable.
+That means : in class -> final dynamic responseData;
+
+But I have to understand that ->
+                                    Future<ApiResponse> postRequest({
+                                     required String url,
+                                     Map<String, dynamic>? body,
+                                   }) async { // Codes }
+
+                                   That means this function will return ApiResponse
+
+
+// getRequest method is almost similar.

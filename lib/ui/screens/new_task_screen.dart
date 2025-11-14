@@ -21,13 +21,14 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
   bool _getTaskStatusCountInProgress = false;
   bool _getNewTaskInProgress = false;
   List<TaskStatusCountModel> _taskStatusCountList = [];
+  // ===========================
   List<TaskModel> _newTaskList = [];
-
+  // This is for the listTiles , where I will write my task description
   @override
   void initState() {
     super.initState();
     _getAllTaskStatusCount();
-    _getAllNewTasks();
+    _getAllNewTasks(); // This is for getting the tasks which I have created
   }
 
   Future<void> _getAllTaskStatusCount() async {
@@ -49,6 +50,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     setState(() {});
   }
 
+  // Getting Tasks
   Future<void> _getAllNewTasks() async {
     _getNewTaskInProgress = true;
     setState(() {});
@@ -68,6 +70,7 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
     setState(() {});
   }
 
+  // Here is the UI for New Task Screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
