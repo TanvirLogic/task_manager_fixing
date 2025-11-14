@@ -29,5 +29,12 @@ in app.dart file. Before naming each screen has a constant like this :
     _onTapLoginButton() ->  _login(); // Here Api Call done, as this this post request
 
     *** In api postRequest method , it will return ApiResponse type data
-    For this We have to understand api_caller.dart file
+    For this We have to understand api_caller.dart file . // I have created another text file
+
+    Now I have created another dart file for the API URlS where I will store the API URL and hide
+    the magic string , which means I have to the baseUrl
+
+    Api Call Function work flow : another text file -> How API method works
+
+
 

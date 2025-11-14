@@ -110,7 +110,8 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
                       taskModel: _newTaskList[index],
                       refreshParent: () {
                         _getAllNewTasks();
-                      },
+                        _getAllTaskStatusCount();
+                      }, // This is needed because if I want to change the task status then it has to updated the status
                     );
                   },
                   separatorBuilder: (context, index) {
@@ -122,11 +123,25 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onTapAddNewTaskButton,
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _onTapRefreshButton,
+            child: Icon(Icons.refresh),
+          ),
+          SizedBox(width: 20),
+          FloatingActionButton(
+            onPressed: _onTapAddNewTaskButton,
+            child: Icon(Icons.add),
+          ),
+        ],
       ),
     );
+  }
+
+  void _onTapRefreshButton() {
+    _getAllNewTasks();
   }
 
   void _onTapAddNewTaskButton() {

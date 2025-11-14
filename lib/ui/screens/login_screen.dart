@@ -161,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (response.isSuccess && response.responseData['status'] == 'success') {
       // Getting data from response
       UserModel model = UserModel.fromJson(response.responseData['data']);
+      // This Models are mainly for storing data in variable
       // Getting data from response
       String token = response.responseData['token'];
 

@@ -4,10 +4,17 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/screens/reset_password_screen.dart';
 import 'package:task_manager/ui/screens/sign_up_screen.dart';
+import 'package:task_manager/ui/widgets/centered_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
+import '../../data/services/api_caller.dart';
+import '../../data/utils/urls.dart';
+import '../widgets/snack_bar_message.dart';
+
 class ForgotPasswordVerifyOtpScreen extends StatefulWidget {
-  const ForgotPasswordVerifyOtpScreen({super.key});
+  const ForgotPasswordVerifyOtpScreen({super.key, required this.emailVerify});
+
+  final String emailVerify;
 
   @override
   State<ForgotPasswordVerifyOtpScreen> createState() =>
@@ -16,6 +23,7 @@ class ForgotPasswordVerifyOtpScreen extends StatefulWidget {
 
 class _ForgotPasswordVerifyOtpScreenState
     extends State<ForgotPasswordVerifyOtpScreen> {
+  bool _loginInProgress = false;
   final TextEditingController _otpTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -62,9 +70,13 @@ class _ForgotPasswordVerifyOtpScreenState
                     appContext: context,
                   ),
                   const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: _onTapVerifyButton,
-                    child: Text('Verify'),
+                  Visibility(
+                    visible: _loginInProgress == false,
+                    replacement: CenteredProgressIndicator(),
+                    child: FilledButton(
+                      onPressed: _onTapVerifyButton,
+                      child: Text('Verify'),
+                    ),
                   ),
                   const SizedBox(height: 36),
                   Center(
@@ -104,11 +116,39 @@ class _ForgotPasswordVerifyOtpScreenState
   }
 
   void _onTapVerifyButton() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => ResetPasswordScreen()),
-      (predicate) => false,
+    if (_formKey.currentState!.validate()) {
+      _verifyEmail();
+    }
+  }
+
+  Future<void> _verifyEmail() async {
+    // API Called
+    _loginInProgress = true;
+    setState(() {});
+
+    String url = Urls.verifyOTPUrl(
+      widget.emailVerify,
+      _otpTEController.text.trim(),
     );
+
+    // postRequest is main a ApiResponse type method
+    final ApiResponse response = await ApiCaller.getRequest(url: url);
+    if (response.isSuccess && response.responseData['status'] == 'success') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResetPasswordScreen(
+            verifyEmailText: widget.emailVerify,
+            verifyOTPText: _otpTEController.text,
+          ),
+        ),
+        (predicate) => false,
+      );
+    } else {
+      _loginInProgress = false;
+      setState(() {});
+      showSnackBarMessage(context, response.errorMessage!);
+    }
   }
 
   @override

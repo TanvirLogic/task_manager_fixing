@@ -1,8 +1,13 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:task_manager/ui/screens/forgot_password_verify_otp_screen.dart';
-import 'package:task_manager/ui/screens/sign_up_screen.dart';
+import 'package:task_manager/ui/widgets/centered_progress_indicator.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
+
+import '../../data/services/api_caller.dart';
+import '../../data/utils/urls.dart';
+import '../widgets/snack_bar_message.dart';
 
 class ForgotPasswordVerifyEmailScreen extends StatefulWidget {
   const ForgotPasswordVerifyEmailScreen({super.key});
@@ -14,6 +19,7 @@ class ForgotPasswordVerifyEmailScreen extends StatefulWidget {
 
 class _ForgotPasswordVerifyEmailScreenState
     extends State<ForgotPasswordVerifyEmailScreen> {
+  bool _loginInProgress = false;
   final TextEditingController _emailTEController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -26,6 +32,7 @@ class _ForgotPasswordVerifyEmailScreenState
             padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -45,11 +52,22 @@ class _ForgotPasswordVerifyEmailScreenState
                   TextFormField(
                     controller: _emailTEController,
                     decoration: InputDecoration(hintText: 'Email'),
+                    validator: (String? value) {
+                      String inputText = value ?? '';
+                      if (EmailValidator.validate(inputText) == false) {
+                        return 'Enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
-                  FilledButton(
-                    onPressed: _onTapNextButton,
-                    child: Icon(Icons.arrow_circle_right_outlined),
+                  Visibility(
+                    visible: _loginInProgress == false,
+                    replacement: CenteredProgressIndicator(),
+                    child: FilledButton(
+                      onPressed: _onTapNextButton,
+                      child: Icon(Icons.arrow_circle_right_outlined),
+                    ),
                   ),
                   const SizedBox(height: 36),
                   Center(
@@ -85,10 +103,32 @@ class _ForgotPasswordVerifyEmailScreenState
   }
 
   void _onTapNextButton() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ForgotPasswordVerifyOtpScreen()),
-    );
+    if (_formKey.currentState!.validate()) {
+      _verifyEmail();
+    }
+  }
+
+  Future<void> _verifyEmail() async {
+    // API Called
+    _loginInProgress = true;
+    setState(() {});
+
+    String url = Urls.verifyEmailUrl(_emailTEController.text.trim());
+
+    // postRequest is main a ApiResponse type method
+    final ApiResponse response = await ApiCaller.getRequest(url: url);
+    if (response.isSuccess && response.responseData['status'] == 'success') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ForgotPasswordVerifyOtpScreen(emailVerify: _emailTEController.text.trim(),),
+        ),
+      );
+    } else {
+      _loginInProgress = false;
+      setState(() {});
+      showSnackBarMessage(context, response.errorMessage!);
+    }
   }
 
   @override

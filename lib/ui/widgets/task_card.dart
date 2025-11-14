@@ -95,7 +95,7 @@ class _TaskCardState extends State<TaskCard> {
                 trailing: widget.taskModel.status == 'New'
                     ? Icon(Icons.done)
                     : null,
-              ),
+              ), // Checks if the status is same as the ListTile title then icon = done
               ListTile(
                 onTap: () {
                   _changeStatus('Progress');

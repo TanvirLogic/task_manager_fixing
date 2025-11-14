@@ -3,14 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:task_manager/ui/screens/login_screen.dart';
 import 'package:task_manager/ui/widgets/screen_background.dart';
 
+import '../../data/services/api_caller.dart';
+import '../../data/utils/urls.dart';
+import '../widgets/snack_bar_message.dart';
+
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  const ResetPasswordScreen({
+    super.key,
+    required this.verifyEmailText,
+    required this.verifyOTPText,
+  });
+
+  final String verifyEmailText;
+  final String verifyOTPText;
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+
+  bool _loginInProgress = false;
   final TextEditingController _passwordTEController = TextEditingController();
   final TextEditingController _confirmPasswordTEController =
       TextEditingController();
@@ -25,6 +38,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -95,11 +109,42 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _onTapResetPasswordButton() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
-      (predicate) => false,
+    // Login Button Function
+    if (_formKey.currentState!.validate()) {
+      _login();
+    }
+  }
+
+  // Api Calling for Login Request ================ //
+
+  Future<void> _login() async {
+    // API Called
+    _loginInProgress = true;
+    setState(() {});
+    Map<String, dynamic> requestBody = {
+      "email":widget.verifyEmailText,
+      "OTP": widget.verifyOTPText,
+      "password": _passwordTEController.text,
+
+    }; // Prepare Body
+
+    // postRequest is main a ApiResponse type method
+    final ApiResponse response = await ApiCaller.postRequest(
+      url: Urls.resetPassUrl, // Url in Utils -> This is loginApiURl
+      body: requestBody,
     );
+    if (response.isSuccess && response.responseData['status'] == 'success') {
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+            (predicate) => false,
+      );
+    } else {
+      _loginInProgress = false;
+      setState(() {});
+      showSnackBarMessage(context, response.errorMessage!);
+    }
   }
 
   @override
